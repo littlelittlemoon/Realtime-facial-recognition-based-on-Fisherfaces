@@ -6,6 +6,30 @@ class LDA(Projection):
         self.eigenvalues = None
         self.class_means = None
         self.auto_components = auto_components
+    
+    def compute_Sw_Sb(X, y, class_means, full_mean, n_classes, n_samples):
+        Sw, Sb = 0, 0
+
+        for i in range(n_classes):
+            # Compute the within class scatter matrix: Sw
+            for j in X[y == i]:
+                tmp = np.atleast_2d(j - class_means[i])
+                Sw += np.dot(tmp.T, tmp)
+
+            # Compute the between class scatter matrix: Sb
+            tmp = np.atleast_2d(class_means[i] - full_mean)
+            Sb += n_samples * np.dot(tmp.T, tmp)
+
+        return Sw, Sb
+
+    def compute_eigenvalues_and_eigenvectors(Sw, Sb):
+        # Compute eigenvalues and eigenvectors
+        eigenvalues, eigenvectors = np.linalg.eig(np.dot(np.linalg.inv(Sw), Sb))
+
+        # Ascending order by eigenvalues
+        sorted_idx = np.argsort(eigenvalues)[::-1]
+
+        return eigenvalues[sorted_idx], eigenvectors[:, sorted_idx]
 
     def fit(self, X, y):
         assert X.shape[0] == y.shape[0], 'X and y dimensions do not match.'
@@ -28,22 +52,11 @@ class LDA(Projection):
 
         full_mean = np.mean(class_means, axis=0)
 
-        Sw, Sb = 0, 0
-        for i in range(n_classes):
-            # Compute the within class scatter matrix: Sw
-            for j in X[y == i]:
-                tmp = np.atleast_2d(j - class_means[i])
-                Sw += np.dot(tmp.T, tmp)
-
-            # Compute the between class scatter matrix: Sb
-            tmp = np.atleast_2d(class_means[i] - full_mean)
-            Sb += n_samples * np.dot(tmp.T, tmp)
-
-        # Get the eigenvalues and eigenvectors in ascending order
+        Sw, Sb = compute_Sw_Sb(X, y, class_means, full_mean, n_classes, n_samples)
         # print(Sw, Sb)
-        eigenvalues, eigenvectors = np.linalg.eig(np.dot(np.linalg.inv(Sw), Sb))
-        sorted_idx = np.argsort(eigenvalues)[::-1]
-        eigenvalues, eigenvectors = eigenvalues[sorted_idx], eigenvectors[:, sorted_idx]
+       
+        # Get eigenvalues and eigenvectors
+        eigenvalues, eigenvectors = compute_eigenvalues_and_eigenvectors(Sw, Sb)
 
         self.subspace = eigenvectors.astype(np.float64)
         self.eigenvalues = eigenvalues
