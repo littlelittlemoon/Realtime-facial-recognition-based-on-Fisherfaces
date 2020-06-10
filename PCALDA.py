@@ -1,3 +1,5 @@
+import numpy as np
+
 from Projection import Projection
 from PCA import PCA
 from LDA import LDA

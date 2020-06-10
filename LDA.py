@@ -1,3 +1,5 @@
+import numpy as np
+
 from Projection import Projection
 
 class LDA(Projection):
