@@ -1,6 +1,6 @@
 class Projection:
-    def __init__(self, n_fisherfaces=2):
-        self.n_fisherfaces = n_fisherfaces
+    def __init__(self, n_components=2):
+        self.n_components = n_components
         self.subspace = None
 
     def fit(self, X, y):
@@ -35,4 +35,4 @@ class Projection:
     @property
     def pro_subspace(self):
         self.check_fitted()
-        return self.subspace[:, :self.n_fisherfaces]
+        return self.subspace[:, :self.n_components]
