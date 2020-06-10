@@ -1,7 +1,7 @@
 class Projection:
     def __init__(self, n_fisherfaces=2):
-        self.__n_fisherfaces = n_fisherfaces
-        self.__subspace = None
+        self.n_fisherfaces = n_fisherfaces
+        self.subspace = None
 
     def fit(self, X, y):
         """
@@ -25,14 +25,14 @@ class Projection:
         X: projected array
         """
 
-    def __check_fitted(self):
+    def check_fitted(self):
         """
         Description: Check that the projector has been fitted.
         """
-        assert self.__subspace is not None, \
+        assert self.subspace is not None, \
             'You must fit %s before you can project' % self.__class__.__name__
 
     @property
     def pro_subspace(self):
-        self.__check_fitted()
-        return self.__subspace[:, :self.__n_fisherfaces]
+        self.check_fitted()
+        return self.subspace[:, :self.n_fisherfaces]
