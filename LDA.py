@@ -38,11 +38,11 @@ class LDA(Projection):
         n_samples, n_features = X.shape
 
         if self.auto_components:
-            self.n_fisherfaces = n_classes - 1
+            self.n_components = n_classes - 1
         else:
-            assert self.n_fisherfaces <= n_classes, \
+            assert self.n_components <= n_classes, \
                 'LDA has (c - 1) non-zero eigenvalues. ' \
-                'Please change n_fisherfaces to <= '
+                'Please change n_components to <= '
 
         # Compute the class means
         class_means = np.zeros((n_classes, n_features))
